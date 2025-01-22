@@ -1,0 +1,9 @@
+{
+"ingnore": [".git", "node_modules", "dist"],
+"watch": ["./src"],
+"exec": "npm run serve",
+"ext": "ts"
+
+
+
+}
