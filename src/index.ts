@@ -12,7 +12,7 @@ app.get('/equipo/:user', async (req, res) => {
     try {
         console.log(req.params.user)
         let equipo = await db.query(`SELECT * FROM Equipos WHERE usuario_id = '${req.params.user}'`);
-        
+         
     console.log(equipo)
         
         res.json(equipo.rows[0])
