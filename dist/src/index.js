@@ -65,81 +65,93 @@ app.use(cors_1.default());
 var body_parser_1 = __importDefault(require("body-parser"));
 var JuankUnderAgua = body_parser_1.default.json();
 var db = __importStar(require("./db-conection"));
-app.get('/tiradas/:user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var db_response, err_1;
+//EXAMEN
+app.get('/voluntario/:numero', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var random;
+    return __generator(this, function (_a) {
+        console.log('\x1b[90m', 'Petición recibida al endpoint GET /voluntario/:numero');
+        try {
+            console.log('\x1b[90m', "Generando numero");
+            random = Math.floor(Math.random() * Number(req.params.numero) + 1);
+            console.log('\x1b[90m', "Numero generado");
+            console.log('\x1b[90m', random);
+            res.json({ random: random });
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+        return [2 /*return*/];
+    });
+}); });
+app.get('/asistencia/:numero', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var alumno, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log('Petición recibida al endpoint GET /tiradas/:user');
+                console.log('\x1b[33m%s\x1b[0m', "Petición recibida al endpoint GET /asistencia/:numero");
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, db.query("SELECT * FROM Usuarios WHERE id ='" + req.params.user + "'")];
+                _a.trys.push([1, 7, , 8]);
+                console.log('\x1b[33m%s\x1b[0m', "Recogiendo información del usuario");
+                return [4 /*yield*/, db.query("SELECT * FROM asistencia WHERE id = " + req.params.numero)];
             case 2:
-                db_response = _a.sent();
-                res.json(db_response.rows[0].tiradas);
-                return [3 /*break*/, 4];
+                alumno = _a.sent();
+                if (!(alumno.rows.length > 0)) return [3 /*break*/, 5];
+                console.log('\x1b[33m%s\x1b[0m', "Updateando información usuario");
+                return [4 /*yield*/, db.query("UPDATE asistencia SET estado = 'presente' WHERE id = " + req.params.numero)];
             case 3:
+                _a.sent();
+                return [4 /*yield*/, db.query("SELECT * FROM asistencia WHERE id = " + req.params.numero)];
+            case 4:
+                alumno = _a.sent();
+                res.json({ alumno: alumno.rows[0].alumno, estado: alumno.rows[0].estado });
+                return [3 /*break*/, 6];
+            case 5:
+                console.log('\x1b[33m%s\x1b[0m', "no existe id del alumno");
+                res.send("No existe ese id de alumno");
+                _a.label = 6;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 err_1 = _a.sent();
                 console.error(err_1);
                 res.status(500).send('Internal Server Error');
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); });
-app.post("/add_card", JuankUnderAgua, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var Data, comprobacion, user, err_2;
+app.post("/notas", JuankUnderAgua, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 console.log(req.body);
+                console.log('\x1b[36m%s\x1b[0m', 'Petición recibida al endpoint GET /notas');
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 9, , 10]);
-                Data = {
-                    user: req.body.user,
-                    carta: req.body.carta,
-                };
-                return [4 /*yield*/, db.query("SELECT * FROM Usuarios_Cartas WHERE usuario_id = '" + Data.user + "' AND carta_id = " + Data.carta)
-                    // 2. Actualizar Cartas
-                ];
+                _a.trys.push([1, 4, , 5]);
+                console.log('\x1b[36m%s\x1b[0m', 'eliminandolo...'); //cyan
+                //No hace falta hacer if porque aunque no exista no va a dar error
+                return [4 /*yield*/, db.query("DELETE FROM notas WHERE id = '" + req.body.id + "'")];
             case 2:
-                comprobacion = _a.sent();
-                // 2. Actualizar Cartas
-                console.log("Actualizando Cartas Usuario");
-                if (!(comprobacion.rows.length > 0)) return [3 /*break*/, 4];
-                // Update Cartas
-                return [4 /*yield*/, db.query("UPDATE Usuarios_Cartas SET cantidad = " + (comprobacion.rows[0].cantidad + 1) + " WHERE id = " + comprobacion.rows[0].id + " ")];
+                //No hace falta hacer if porque aunque no exista no va a dar error
+                _a.sent();
+                console.log('\x1b[36m%s\x1b[0m', 'creando nota del usuario'); //cyan
+                return [4 /*yield*/, db.query("INSERT INTO notas (id, curso, asignatura, calificacion) VALUES ('" + req.body.id + "', '" + req.body.curso + "', '" + req.body.asignatura + "', " + req.body.calificacion + ");")];
             case 3:
-                // Update Cartas
                 _a.sent();
-                console.log("Cartas de usuario actualizadas");
-                return [3 /*break*/, 6];
+                console.log('\x1b[36m%s\x1b[0m', 'enviando información del usuario.'); //cyan
+                res.json("Usuario creado");
+                return [3 /*break*/, 5];
             case 4:
-                console.log("Creando nueva carta: " + Data.user + ", " + Data.carta);
-                return [4 /*yield*/, db.query("INSERT INTO Usuarios_Cartas (usuario_id, carta_id, cantidad) VALUES ('" + Data.user + "', " + Data.carta + ", 1)")];
-            case 5:
-                _a.sent();
-                console.log("Nueva carta creada");
-                _a.label = 6;
-            case 6: return [4 /*yield*/, db.query("SELECT * FROM Usuarios WHERE id ='" + Data.user + "'")];
-            case 7:
-                user = _a.sent();
-                return [4 /*yield*/, db.query("UPDATE Usuarios SET tiradas = " + (user.rows[0].tiradas + 1) + " WHERE id = '" + Data.user + "'")];
-            case 8:
-                _a.sent();
-                console.log("Incrementando tiradas del usuario");
-                res.json("Se ha sumado 1 roll");
-                return [3 /*break*/, 10];
-            case 9:
                 err_2 = _a.sent();
                 console.log(err_2);
                 res.status(500).send('Internal Server Error');
-                return [3 /*break*/, 10];
-            case 10: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });
 var port = process.env.PORT || 3000;
-app.listen(port, function () { return console.log("App listening on PORT " + port + "\n    \n    ENDPOINTS:\n    -POST /add_card\n    -GET /tiradas/:user\n    "); });
+app.listen(port, function () { return console.log("App listening on PORT " + port + "\n    \n    ENDPOINTS:\n    -POST /add_card\n    -GET /tiradas/:user\n    -GET /cartas/:user\n    "); });
