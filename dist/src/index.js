@@ -613,7 +613,7 @@ app.post("/usuario", JuankUnderAgua, function (req, res) { return __awaiter(void
                 comprobacion = _a.sent();
                 console.log("user comrpobado");
                 if (!(comprobacion.rows.length < 1)) return [3 /*break*/, 5];
-                return [4 /*yield*/, db.query("INSERT INTO Usuarios (id, nombre, tiradas) VALUES ('" + req.body.email + "', '" + req.body.name + "', 0);")];
+                return [4 /*yield*/, db.query("INSERT INTO Usuarios (id, nombre, tiradas, gemas) VALUES ('" + req.body.email + "', '" + req.body.name + "', 0, 0);")];
             case 3:
                 _a.sent();
                 console.log("usuario creado");

@@ -386,7 +386,7 @@ app.post("/usuario", JuankUnderAgua, async (req, res) => {
         let comprobacion = await db.query(`SELECT * FROM Usuarios WHERE id = '${req.body.email}'`)
         console.log("user comrpobado")
         if (comprobacion.rows.length < 1) {
-              await db.query(`INSERT INTO Usuarios (id, nombre, tiradas) VALUES ('${req.body.email}', '${req.body.name}', 0);`)
+              await db.query(`INSERT INTO Usuarios (id, nombre, tiradas, gemas) VALUES ('${req.body.email}', '${req.body.name}', 0, 0);`)
               console.log("usuario creado") 
              comprobacion = await db.query(`SELECT * FROM Usuarios WHERE id = '${req.body.email}'`)
         }
